@@ -1,6 +1,5 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue'
-import { applicationsRegistry } from '~/application/registry'
-import { defaultDesktopLayout } from '~/application/desktop-layout'
+import { useNuxtOS } from '~/composables/useNuxtOS'
 import type { OSSettings } from '~/types/os-settings'
 import type {
   DesktopShortcut,
@@ -18,8 +17,12 @@ export function useWindowManager(
   osSettings: Ref<OSSettings>,
   initialAppId: WindowAppId | null = null
 ) {
+  const os = useNuxtOS()
+
+  const activeWindowId = ref<WindowAppId | null>(null) // We will initialize this correctly in mounted or watch
+
   const windows = ref<DesktopWindow[]>(
-    applicationsRegistry.map((app, index, allApps) => ({
+    os.registry.value.map((app, index, allApps) => ({
       id: app.id,
       title: app.title,
       subtitle: app.subtitle,
@@ -56,7 +59,9 @@ export function useWindowManager(
 
   const startMenuOpen = ref(false)
   const nextZ = ref(10)
-  const activeWindowId = ref<WindowAppId | null>(applicationsRegistry.find((app) => app.launchOnBoot)?.id ?? null)
+
+  // Immediately compute an active component based on boot requirement, or update later
+  activeWindowId.value = os.registry.value.find((app) => app.launchOnBoot)?.id ?? null
 
   const now = ref(new Date())
   let clockTimer: ReturnType<typeof setInterval> | null = null
@@ -64,7 +69,7 @@ export function useWindowManager(
   const taskbarApps = computed<TaskbarApp[]>(() =>
     windows.value
       .filter((windowItem) => {
-        const app = applicationsRegistry.find((a) => a.id === windowItem.id)
+        const app = os.applicationsById.value[windowItem.id]
         const isPinned = app?.defaultPinnedToTaskbar !== false
         return isPinned || windowItem.isOpen
       })
@@ -87,7 +92,7 @@ export function useWindowManager(
   )
 
   const desktopShortcuts = computed<DesktopShortcut[]>(() => {
-    return defaultDesktopLayout.map((config): DesktopShortcut => {
+    return os.layout.value.map((config): DesktopShortcut => {
       if (config.type === 'folder') {
         const populatedChildren = config.children.map(childApp => {
           const w = windows.value.find(win => win.id === childApp.id)

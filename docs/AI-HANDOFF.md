@@ -9,8 +9,10 @@ Entry chain:
 - `app/pages/index.vue` -> mounts `<DesktopShell />`
 - `app/pages/admin/calculator.vue` -> example path-based deep link into desktop shell
 - `app/components/os/DesktopShell.vue` -> orchestrates all OS UI surfaces
-- `app/application/registry.ts` -> app registration source of truth (metadata + component mapping)
+- `app/application/registry.ts` -> consumer app registry (metadata + component mapping)
 - `app/application/desktop-layout.ts` -> structural grouping and mapping of apps to the desktop surface
+- `app/plugins/os-boot.ts` -> boots the OS on startup by calling `useNuxtOS().boot()`
+- `app/composables/useNuxtOS.ts` -> **agnostic OS state API** — the bridge between the Shell and consumer config
 - `app/composables/useWindowManager.ts` -> window logic and interactions
 - `app/composables/useOSSettings.ts` -> global configurable settings + persistence
 
@@ -60,12 +62,21 @@ Notes:
 
 ## 4) Runtime state ownership
 
+### OS Boot API (`useNuxtOS`)
+
+Owns:
+
+- module-level `shallowRef` for the active app registry and desktop layout
+- `boot({ apps, desktopLayout })` function called by `app/plugins/os-boot.ts` on startup
+- `applicationsById` computed (keyed lookup for shell components)
+- **This is the only place the Shell reads app data from** — it never imports `registry.ts` directly
+
 ### Window state (`useWindowManager`)
 
 Owns:
 
 - list of windows (`windows`)
-- app-derived window initialization from `applicationsRegistry`
+- app-derived window initialization from `useNuxtOS().registry`
 - z-index and active window
 - open/minimize/maximize/close/focus actions
 - drag + resize pointer interaction state
@@ -101,6 +112,9 @@ Owns:
 - App registration is registry-driven (`app/application/registry.ts`).
 - Desktop visibility and folders are defined exclusively in `app/application/desktop-layout.ts`.
 - Settings is implemented as a registered app module (`app/application/settings/AppRoot.vue`).
+- The OS Shell (`DesktopShell`, `useWindowManager`) **never imports from `app/application/` directly**. All data flows through `useNuxtOS`.
+- `.playground/` is a reference consumer template — not executed by `pnpm dev`.
+- **Node.js 20 LTS is required.** Node 22 causes an IPC crash in `@nuxt/vite-builder`. A `.nvmrc` file pins this at the repo root.
 
 ## 7) Safety rules for future edits
 
