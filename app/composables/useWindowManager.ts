@@ -1,4 +1,5 @@
-import { computed, onBeforeUnmount, onMounted, ref, type Ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue'
+import type { OSSettings } from '~/types/os-settings'
 import type {
   DesktopShortcut,
   DesktopWindow,
@@ -9,9 +10,7 @@ import type {
   WindowAppId
 } from '~/types/window'
 
-const MAXIMIZED_GAP = 10
-
-export function useWindowManager(stageRef: Ref<HTMLElement | null>) {
+export function useWindowManager(stageRef: Ref<HTMLElement | null>, osSettings: Ref<OSSettings>) {
   const windows = ref<DesktopWindow[]>([
     {
       id: 'explorer',
@@ -235,10 +234,32 @@ export function useWindowManager(stageRef: Ref<HTMLElement | null>) {
       return
     }
 
-    windowItem.x = MAXIMIZED_GAP
-    windowItem.y = MAXIMIZED_GAP
-    windowItem.w = Math.max(windowItem.minWidth, width - MAXIMIZED_GAP * 2)
-    windowItem.h = Math.max(windowItem.minHeight, height - MAXIMIZED_GAP * 2)
+    const margin = osSettings.value.windowMaximizeMargin
+    const reservedTaskbarSpace = osSettings.value.reserveTaskbarSpaceOnMaximize
+      ? osSettings.value.taskbarHeight + osSettings.value.taskbarBottomGap
+      : 0
+    const position = osSettings.value.taskbarPosition
+
+    let x = margin
+    let y = margin
+    let availableWidth = Math.max(0, width - margin * 2)
+    let availableHeight = Math.max(0, height - margin * 2)
+
+    if (reservedTaskbarSpace > 0) {
+      if (position === 'bottom') {
+        availableHeight -= reservedTaskbarSpace
+      } else if (position === 'left') {
+        x += reservedTaskbarSpace
+        availableWidth -= reservedTaskbarSpace
+      } else if (position === 'right') {
+        availableWidth -= reservedTaskbarSpace
+      }
+    }
+
+    windowItem.x = x
+    windowItem.y = y
+    windowItem.w = Math.max(windowItem.minWidth, availableWidth)
+    windowItem.h = Math.max(windowItem.minHeight, availableHeight)
   }
 
   function maximizeWindow(id: WindowAppId) {
@@ -522,6 +543,19 @@ export function useWindowManager(stageRef: Ref<HTMLElement | null>) {
 
     onViewportResize()
   })
+
+  watch(
+    () => [
+      osSettings.value.reserveTaskbarSpaceOnMaximize,
+      osSettings.value.taskbarPosition,
+      osSettings.value.taskbarHeight,
+      osSettings.value.taskbarBottomGap,
+      osSettings.value.windowMaximizeMargin
+    ],
+    () => {
+      onViewportResize()
+    }
+  )
 
   onBeforeUnmount(() => {
     if (clockTimer) {

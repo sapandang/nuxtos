@@ -56,3 +56,7 @@
   text-align: center;
   line-height: 1.15;
 }
+
+.win11-desktop.pos-left .desktop-shortcuts {
+  left: calc(var(--os-taskbar-gap, 10px) + var(--os-taskbar-size, 58px) + 12px);
+}

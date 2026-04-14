@@ -1,20 +1,12 @@
 .taskbar {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 10px;
   z-index: 40;
-  padding: 0 22px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
 .taskbar-center {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin: 0 auto;
   padding: 8px;
   border-radius: 18px;
   background: rgba(236, 244, 255, 0.63);
@@ -58,8 +50,6 @@
 }
 
 .taskbar-right {
-  min-width: 86px;
-  text-align: right;
   color: #edf2ff;
   font-size: 0.73rem;
 }
@@ -67,4 +57,58 @@
 .taskbar-right p {
   margin: 0;
   line-height: 1.22;
+}
+
+.taskbar.pos-bottom {
+  left: 0;
+  right: 0;
+  bottom: var(--os-taskbar-gap, 10px);
+  padding: 0 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.taskbar.pos-bottom .taskbar-center {
+  margin: 0 auto;
+}
+
+.taskbar.pos-bottom .taskbar-right {
+  min-width: 86px;
+  text-align: right;
+}
+
+.taskbar.pos-left,
+.taskbar.pos-right {
+  top: var(--os-taskbar-gap, 10px);
+  bottom: var(--os-taskbar-gap, 10px);
+  width: var(--os-taskbar-size, 58px);
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.taskbar.pos-left {
+  left: var(--os-taskbar-gap, 10px);
+}
+
+.taskbar.pos-right {
+  right: var(--os-taskbar-gap, 10px);
+}
+
+.taskbar.pos-left .taskbar-center,
+.taskbar.pos-right .taskbar-center {
+  width: 100%;
+  flex-direction: column;
+  border-radius: 16px;
+}
+
+.taskbar.pos-left .taskbar-right,
+.taskbar.pos-right .taskbar-right {
+  position: absolute;
+  bottom: 10px;
+  text-align: center;
+  font-size: 0.66rem;
 }

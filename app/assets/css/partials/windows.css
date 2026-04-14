@@ -122,6 +122,11 @@
   gap: 10px;
 }
 
+.settings-panel {
+  display: grid;
+  gap: 10px;
+}
+
 .content-card span {
   font-size: 28px;
   color: #2e5fcd;
@@ -140,6 +145,47 @@
   margin: 4px 0 0;
   color: #334155;
   font-size: 0.8rem;
+}
+
+.settings-switch-row,
+.settings-field-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: #1e293b;
+}
+
+.settings-field-row input[type="number"] {
+  width: 90px;
+  border: 1px solid rgba(108, 140, 198, 0.45);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.88);
+  color: #0f172a;
+  padding: 5px 8px;
+}
+
+.settings-field-row select {
+  border: 1px solid rgba(108, 140, 198, 0.45);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.88);
+  color: #0f172a;
+  padding: 5px 8px;
+}
+
+.settings-reset {
+  justify-self: start;
+  border: 0;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 0.76rem;
+  color: #0f172a;
+  background: rgba(170, 196, 241, 0.62);
+}
+
+.settings-reset:hover {
+  background: rgba(147, 180, 238, 0.8);
 }
 
 .browser-shell {

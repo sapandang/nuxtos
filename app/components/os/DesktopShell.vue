@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import BrowserApp from '~/components/os/apps/BrowserApp.vue'
 import DesktopShortcuts from '~/components/os/DesktopShortcuts.vue'
 import ExplorerApp from '~/components/os/apps/ExplorerApp.vue'
@@ -7,10 +7,12 @@ import SettingsApp from '~/components/os/apps/SettingsApp.vue'
 import StartMenu from '~/components/os/StartMenu.vue'
 import Taskbar from '~/components/os/Taskbar.vue'
 import WindowFrame from '~/components/os/WindowFrame.vue'
+import { useOSSettings } from '~/composables/useOSSettings'
 import { useWindowManager } from '~/composables/useWindowManager'
-import type { WindowAppId } from '~/types/window'
+import type { OSSettings } from '~/types/os-settings'
 
 const stageRef = ref<HTMLElement | null>(null)
+const { settings, updateSetting, resetSettings } = useOSSettings()
 
 const {
   activeWindowId,
@@ -31,17 +33,21 @@ const {
   minimizeWindow,
   maximizeWindow,
   resizeHandles
-} = useWindowManager(stageRef)
+} = useWindowManager(stageRef, settings)
 
-const appComponents: Record<WindowAppId, unknown> = {
-  explorer: ExplorerApp,
-  browser: BrowserApp,
-  settings: SettingsApp
+function onUpdateSetting(key: keyof OSSettings, value: OSSettings[keyof OSSettings]) {
+  updateSetting(key, value)
 }
+
+const desktopStyle = computed(() => ({
+  '--os-taskbar-size': `${settings.value.taskbarHeight}px`,
+  '--os-taskbar-gap': `${settings.value.taskbarBottomGap}px`
+}))
+
 </script>
 
 <template>
-  <div class="win11-desktop" @pointerdown="onDesktopPointerDown">
+  <div class="win11-desktop" :class="`pos-${settings.taskbarPosition}`" :style="desktopStyle" @pointerdown="onDesktopPointerDown">
     <div class="ambient-layer"></div>
 
     <DesktopShortcuts :shortcuts="desktopShortcuts" @open="openWindow" />
@@ -61,16 +67,29 @@ const appComponents: Record<WindowAppId, unknown> = {
         @maximize="maximizeWindow"
         @close="closeWindow"
       >
-        <component :is="appComponents[windowItem.id]" />
+        <ExplorerApp v-if="windowItem.id === 'explorer'" />
+        <BrowserApp v-else-if="windowItem.id === 'browser'" />
+        <SettingsApp
+          v-else
+          :settings="settings"
+          @update-setting="onUpdateSetting"
+          @reset-settings="resetSettings"
+        />
       </WindowFrame>
     </div>
 
-    <StartMenu :is-open="startMenuOpen" :apps="desktopShortcuts" @open-app="openWindow" />
+    <StartMenu
+      :is-open="startMenuOpen"
+      :apps="desktopShortcuts"
+      :position="settings.taskbarPosition"
+      @open-app="openWindow"
+    />
 
     <Taskbar
       :apps="taskbarApps"
       :current-time="currentTime"
       :current-date="currentDate"
+      :position="settings.taskbarPosition"
       @app-click="onTaskbarAppClick"
       @toggle-start="startMenuOpen = !startMenuOpen"
     />

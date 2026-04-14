@@ -1,13 +1,9 @@
 @media (max-width: 860px) {
-  .window-stage {
-    padding-bottom: 98px;
-  }
-
-  .taskbar {
+  .taskbar.pos-bottom {
     padding: 0 10px;
   }
 
-  .taskbar-right {
+  .taskbar.pos-bottom .taskbar-right {
     min-width: 66px;
     font-size: 0.64rem;
   }
@@ -23,5 +19,10 @@
 
   .start-app-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .start-menu.pos-left,
+  .start-menu.pos-right {
+    width: min(70vw, 420px);
   }
 }

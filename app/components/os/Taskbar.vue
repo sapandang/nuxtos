@@ -1,20 +1,25 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import type { TaskbarPosition } from '~/types/os-settings'
 import type { TaskbarApp, WindowAppId } from '~/types/window'
 
-defineProps<{
+const props = defineProps<{
   apps: TaskbarApp[]
   currentTime: string
   currentDate: string
+  position: TaskbarPosition
 }>()
 
 const emit = defineEmits<{
   appClick: [id: WindowAppId]
   toggleStart: []
 }>()
+
+const taskbarClass = computed(() => `pos-${props.position}`)
 </script>
 
 <template>
-  <footer class="taskbar" @click.stop>
+  <footer class="taskbar" :class="taskbarClass" @click.stop>
     <div class="taskbar-center">
       <button class="taskbar-btn start-btn" @click="emit('toggleStart')">
         <span class="icon-[mdi--microsoft-windows]"></span>

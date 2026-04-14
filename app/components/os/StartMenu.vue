@@ -1,19 +1,24 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import type { TaskbarPosition } from '~/types/os-settings'
 import type { DesktopShortcut, WindowAppId } from '~/types/window'
 
-defineProps<{
+const props = defineProps<{
   isOpen: boolean
   apps: DesktopShortcut[]
+  position: TaskbarPosition
 }>()
 
 const emit = defineEmits<{
   openApp: [id: WindowAppId]
 }>()
+
+const startMenuClass = computed(() => `pos-${props.position}`)
 </script>
 
 <template>
   <transition name="start-menu-fade">
-    <div v-if="isOpen" class="start-menu" @click.stop>
+    <div v-if="isOpen" class="start-menu" :class="startMenuClass" @click.stop>
       <header class="start-header">
         <h2>Pinned</h2>
         <button>All apps</button>
