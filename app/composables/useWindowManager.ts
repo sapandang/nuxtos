@@ -75,6 +75,14 @@ export function useWindowManager(
       }))
   )
 
+  const allApps = computed<DesktopShortcut[]>(() =>
+    windows.value.map((windowItem) => ({
+      id: windowItem.id,
+      title: windowItem.title,
+      iconClass: windowItem.iconClass
+    }))
+  )
+
   const desktopShortcuts = computed<DesktopShortcut[]>(() =>
     windows.value
       .filter((windowItem) => {
@@ -553,6 +561,7 @@ export function useWindowManager(
 
   return {
     activeWindowId,
+    allApps,
     currentDate,
     currentTime,
     desktopShortcuts,

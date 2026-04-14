@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { applicationsById } from '~/application/registry'
 import DesktopShortcuts from '~/components/os/DesktopShortcuts.vue'
-import StartMenu from '~/components/os/StartMenu.vue'
+import CommandMenu from '~/components/os/CommandMenu.vue'
 import Taskbar from '~/components/os/Taskbar.vue'
 import WindowFrame from '~/components/os/WindowFrame.vue'
 import { useOSSettings } from '~/composables/useOSSettings'
@@ -20,6 +20,7 @@ const { settings } = useOSSettings()
 
 const {
   activeWindowId,
+  allApps,
   currentDate,
   currentTime,
   desktopShortcuts,
@@ -74,10 +75,9 @@ const desktopStyle = computed(() => ({
       </WindowFrame>
     </div>
 
-    <StartMenu
+    <CommandMenu
       :is-open="startMenuOpen"
-      :apps="desktopShortcuts"
-      :position="settings.taskbarPosition"
+      :apps="allApps"
       @open-app="openWindow"
     />
 
