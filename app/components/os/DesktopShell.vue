@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { applicationsById } from '~/application/registry'
+import { useNuxtOS } from '~/composables/useNuxtOS'
 import DesktopShortcuts from '~/components/os/DesktopShortcuts.vue'
 import CommandMenu from '~/components/os/CommandMenu.vue'
 import Taskbar from '~/components/os/Taskbar.vue'
@@ -17,6 +17,9 @@ const props = defineProps<{
 
 const stageRef = ref<HTMLElement | null>(null)
 const { settings } = useOSSettings()
+
+const os = useNuxtOS()
+const applicationsById = os.applicationsById
 
 const {
   activeWindowId,
