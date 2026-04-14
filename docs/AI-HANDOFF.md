@@ -2,7 +2,9 @@
 
 This project is a Nuxt 4 + Vue 3 desktop-style OS UI called **NuxtOS**.
 
-## 1) Core architecture
+## 1) Core Architecture (Nuxt Layer Pattern)
+
+NuxtOS is architected as a **Nuxt Layer UI Framework**. The Core OS Engine (Shell, Taskbar, Window Manager) is strictly segregated from the Consumer implementation (Apps, Registry, Layout).
 
 Entry chain:
 
@@ -66,8 +68,8 @@ Notes:
 
 Owns:
 
-- module-level `shallowRef` for the active app registry and desktop layout
-- `boot({ apps, desktopLayout })` function called by `app/plugins/os-boot.ts` on startup
+- module-level `shallowRef` singletons for the active app registry and desktop layout (guarantees one safe instance per Node process, entirely bypassing Nuxt SSR context boundaries).
+- `boot({ apps, desktopLayout })` function called by the consumer (e.g., `app/plugins/os-boot.ts`) on startup.
 - `applicationsById` computed (keyed lookup for shell components)
 - **This is the only place the Shell reads app data from** — it never imports `registry.ts` directly
 
@@ -112,8 +114,9 @@ Owns:
 - App registration is registry-driven (`app/application/registry.ts`).
 - Desktop visibility and folders are defined exclusively in `app/application/desktop-layout.ts`.
 - Settings is implemented as a registered app module (`app/application/settings/AppRoot.vue`).
-- The OS Shell (`DesktopShell`, `useWindowManager`) **never imports from `app/application/` directly**. All data flows through `useNuxtOS`.
-- `.playground/` is a reference consumer template — not executed by `pnpm dev`.
+- The OS Shell (`DesktopShell`, `useWindowManager`) **never imports from `app/application/` directly**. All data flows strictly through the `useNuxtOS` singleton.
+- `.playground/` exists as a reference template for consumers.
+- A `.nuxtignore` file explicitly masks the playground to prevent Vite from falling into an infinite virtual-file recursion loop when scanning layers locally.
 - **Node.js 20 LTS is required.** Node 22 causes an IPC crash in `@nuxt/vite-builder`. A `.nvmrc` file pins this at the repo root.
 
 ## 7) Safety rules for future edits
