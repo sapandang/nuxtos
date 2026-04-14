@@ -60,6 +60,8 @@ export const applicationsRegistry: RegisteredApplication[] = [
     iconClass: 'icon-[mdi--calculator-variant-outline]',
     component: CalculatorAppRoot,
     launchOnBoot: false,
+    defaultPinnedToTaskbar: false,
+    defaultShowInDesktop: false,
     window: {
       x: 290,
       y: 128,

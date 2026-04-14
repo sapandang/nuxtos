@@ -60,21 +60,32 @@ export function useWindowManager(
   let clockTimer: ReturnType<typeof setInterval> | null = null
 
   const taskbarApps = computed<TaskbarApp[]>(() =>
-    windows.value.map((windowItem) => ({
-      id: windowItem.id,
-      title: windowItem.title,
-      iconClass: windowItem.iconClass,
-      running: windowItem.isOpen,
-      active: windowItem.id === activeWindowId.value && windowItem.isOpen && !windowItem.isMinimized
-    }))
+    windows.value
+      .filter((windowItem) => {
+        const app = applicationsRegistry.find((a) => a.id === windowItem.id)
+        const isPinned = app?.defaultPinnedToTaskbar !== false
+        return isPinned || windowItem.isOpen
+      })
+      .map((windowItem) => ({
+        id: windowItem.id,
+        title: windowItem.title,
+        iconClass: windowItem.iconClass,
+        running: windowItem.isOpen,
+        active: windowItem.id === activeWindowId.value && windowItem.isOpen && !windowItem.isMinimized
+      }))
   )
 
   const desktopShortcuts = computed<DesktopShortcut[]>(() =>
-    windows.value.map((windowItem) => ({
-      id: windowItem.id,
-      title: windowItem.title,
-      iconClass: windowItem.iconClass
-    }))
+    windows.value
+      .filter((windowItem) => {
+        const app = applicationsRegistry.find((a) => a.id === windowItem.id)
+        return app?.defaultShowInDesktop !== false
+      })
+      .map((windowItem) => ({
+        id: windowItem.id,
+        title: windowItem.title,
+        iconClass: windowItem.iconClass
+      }))
   )
 
   const liveWindows = computed(() => windows.value.filter((windowItem) => windowItem.isOpen && !windowItem.isMinimized))

@@ -18,4 +18,6 @@ export interface RegisteredApplication {
   component: Component
   window: ApplicationWindowDefaults
   launchOnBoot?: boolean
+  defaultPinnedToTaskbar?: boolean
+  defaultShowInDesktop?: boolean
 }
