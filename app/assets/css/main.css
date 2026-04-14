@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@plugin "@iconify/tailwind4";
+
+@import "./partials/base.css";
+@import "./partials/desktop.css";
+@import "./partials/windows.css";
+@import "./partials/start-menu.css";
+@import "./partials/taskbar.css";
+@import "./partials/responsive.css";

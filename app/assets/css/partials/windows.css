@@ -1,0 +1,254 @@
+.window-stage {
+  position: absolute;
+  inset: 0;
+  padding-bottom: 88px;
+  overflow: hidden;
+}
+
+.desktop-window {
+  position: absolute;
+  border-radius: 16px;
+  touch-action: none;
+  user-select: none;
+}
+
+.window-shell {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(173, 208, 255, 0.45);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(232, 240, 255, 0.65));
+  box-shadow:
+    0 28px 38px rgba(5, 15, 42, 0.35),
+    0 8px 18px rgba(5, 15, 42, 0.26);
+  backdrop-filter: blur(18px) saturate(130%);
+}
+
+.desktop-window.maximized.window-shell {
+  border-radius: 12px;
+}
+
+.desktop-window-active.window-shell {
+  border-color: rgba(255, 255, 255, 0.72);
+}
+
+.window-titlebar {
+  height: 48px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, rgba(245, 249, 255, 0.82), rgba(226, 236, 252, 0.5));
+  cursor: grab;
+}
+
+.window-titlebar:active {
+  cursor: grabbing;
+}
+
+.window-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.window-icon {
+  font-size: 21px;
+  color: #2856b8;
+}
+
+.window-title {
+  margin: 0;
+  color: #0f172a;
+  font-weight: 600;
+  font-size: 0.86rem;
+}
+
+.window-subtitle {
+  margin: 1px 0 0;
+  color: #475569;
+  font-size: 0.7rem;
+}
+
+.window-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.window-control {
+  width: 34px;
+  height: 28px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #0f172a;
+  display: grid;
+  place-items: center;
+  font-size: 17px;
+}
+
+.window-control:hover {
+  background: rgba(132, 165, 223, 0.34);
+}
+
+.window-control.close:hover {
+  background: #e63946;
+  color: #fff;
+}
+
+.window-content {
+  height: calc(100% - 48px);
+  overflow: auto;
+  padding: 16px;
+  color: #0f172a;
+}
+
+.content-card-grid,
+.settings-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.content-card,
+.settings-tile {
+  border-radius: 14px;
+  border: 1px solid rgba(108, 140, 198, 0.32);
+  background: rgba(255, 255, 255, 0.78);
+  padding: 14px;
+  display: flex;
+  align-items: start;
+  gap: 10px;
+}
+
+.content-card span {
+  font-size: 28px;
+  color: #2e5fcd;
+}
+
+.content-card h3,
+.settings-tile h3,
+.browser-page h3 {
+  margin: 0;
+  font-size: 0.93rem;
+}
+
+.content-card p,
+.settings-tile p,
+.browser-page p {
+  margin: 4px 0 0;
+  color: #334155;
+  font-size: 0.8rem;
+}
+
+.browser-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.browser-bar {
+  border-radius: 12px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(139, 166, 214, 0.44);
+  color: #334155;
+}
+
+.browser-bar p {
+  margin: 0;
+  font-size: 0.74rem;
+}
+
+.browser-page {
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid rgba(108, 140, 198, 0.32);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.primary-action {
+  margin-top: 12px;
+  border: 0;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 0.78rem;
+  color: #fff;
+  background: linear-gradient(130deg, #2462da, #1a79d2);
+}
+
+.resize-handle {
+  position: absolute;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  z-index: 6;
+}
+
+.resize-handle.n {
+  top: -5px;
+  left: 12px;
+  right: 12px;
+  height: 10px;
+  cursor: ns-resize;
+}
+
+.resize-handle.s {
+  bottom: -5px;
+  left: 12px;
+  right: 12px;
+  height: 10px;
+  cursor: ns-resize;
+}
+
+.resize-handle.e {
+  top: 12px;
+  right: -5px;
+  bottom: 12px;
+  width: 10px;
+  cursor: ew-resize;
+}
+
+.resize-handle.w {
+  top: 12px;
+  left: -5px;
+  bottom: 12px;
+  width: 10px;
+  cursor: ew-resize;
+}
+
+.resize-handle.ne,
+.resize-handle.nw,
+.resize-handle.se,
+.resize-handle.sw {
+  width: 12px;
+  height: 12px;
+}
+
+.resize-handle.ne {
+  top: -5px;
+  right: -5px;
+  cursor: nesw-resize;
+}
+
+.resize-handle.nw {
+  top: -5px;
+  left: -5px;
+  cursor: nwse-resize;
+}
+
+.resize-handle.se {
+  right: -5px;
+  bottom: -5px;
+  cursor: nwse-resize;
+}
+
+.resize-handle.sw {
+  left: -5px;
+  bottom: -5px;
+  cursor: nesw-resize;
+}

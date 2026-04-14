@@ -1,0 +1,27 @@
+@media (max-width: 860px) {
+  .window-stage {
+    padding-bottom: 98px;
+  }
+
+  .taskbar {
+    padding: 0 10px;
+  }
+
+  .taskbar-right {
+    min-width: 66px;
+    font-size: 0.64rem;
+  }
+
+  .desktop-shortcuts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 220px;
+  }
+
+  .desktop-shortcut {
+    width: auto;
+  }
+
+  .start-app-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

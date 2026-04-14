@@ -1,0 +1,58 @@
+.win11-desktop {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  background:
+    radial-gradient(circle at 18% 14%, rgba(214, 236, 255, 0.45), transparent 38%),
+    radial-gradient(circle at 88% 82%, rgba(74, 123, 213, 0.38), transparent 40%),
+    linear-gradient(135deg, #1d3977 0%, #11285f 44%, #09183d 100%);
+}
+
+.ambient-layer {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 56% 46%, rgba(255, 255, 255, 0.2), transparent 40%),
+    radial-gradient(circle at 52% 54%, rgba(34, 75, 183, 0.55), transparent 50%);
+  filter: blur(32px);
+  pointer-events: none;
+}
+
+.desktop-shortcuts {
+  position: absolute;
+  top: 22px;
+  left: 20px;
+  z-index: 2;
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 10px;
+}
+
+.desktop-shortcut {
+  width: 96px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: transparent;
+  color: #e2e8f0;
+  padding: 9px 7px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 150ms ease;
+}
+
+.desktop-shortcut:hover {
+  background: rgba(192, 216, 255, 0.14);
+  border-color: rgba(226, 232, 240, 0.24);
+}
+
+.desktop-shortcut-icon {
+  font-size: 34px;
+}
+
+.desktop-shortcut-label {
+  font-size: 0.72rem;
+  text-align: center;
+  line-height: 1.15;
+}
