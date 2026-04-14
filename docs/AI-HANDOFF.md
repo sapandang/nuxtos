@@ -7,6 +7,7 @@ This project is a Nuxt 4 + Vue 3 desktop-style OS UI called **NuxtOS**.
 Entry chain:
 
 - `app/pages/index.vue` -> mounts `<DesktopShell />`
+- `app/pages/admin/calculator.vue` -> example path-based deep link into desktop shell
 - `app/components/os/DesktopShell.vue` -> orchestrates all OS UI surfaces
 - `app/application/registry.ts` -> app registration source of truth (metadata + component mapping)
 - `app/composables/useWindowManager.ts` -> window logic and interactions
@@ -16,6 +17,7 @@ Types:
 
 - `app/types/window.ts` -> window, interaction, taskbar item, shortcut types
 - `app/types/os-settings.ts` -> OS settings schema + defaults
+- `app/types/application.ts` -> app registry contract types
 
 ## 2) UI components
 
@@ -80,6 +82,9 @@ Owns:
 ## 5) Important behavior contracts
 
 - Taskbar position supports: `bottom | left | right`.
+- Desktop shell can accept route launch context:
+  - `initialAppId` (open/focus app on boot)
+  - `initialAppQuery` (pass route query into launched app)
 - Maximize respects:
   - `reserveTaskbarSpaceOnMaximize`
   - `taskbarPosition`
@@ -120,6 +125,8 @@ Owns:
 ## 9) Quick debug map
 
 - Windows not visible: check `DesktopShell.vue` wiring and `liveWindows` in `useWindowManager`.
+- Route deep link not opening app: check `initialAppId` flow from route page -> `DesktopShell` -> `useWindowManager`.
+- Query not reaching app: check `initialAppQuery` wiring and app `launchQuery` prop handling.
 - Maximize overlap bugs: check `applyMaximizedBounds` in `useWindowManager`.
 - Settings not persisting: check `useOSSettings` watch + storage key.
 - Position styling issues: check `taskbar.css` and `start-menu.css` variant classes.

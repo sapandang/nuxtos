@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import type { LocationQuery } from 'vue-router'
+
+const props = defineProps<{
+  launchQuery?: LocationQuery
+}>()
 
 const display = ref('0')
 const first = ref<number | null>(null)
@@ -69,6 +74,22 @@ function equals() {
   operator.value = null
   waitingForSecond.value = true
 }
+
+onMounted(() => {
+  const value = props.launchQuery?.value
+  const rawValue = Array.isArray(value) ? value[0] : value
+  if (typeof rawValue !== 'string') {
+    return
+  }
+
+  const parsed = Number.parseFloat(rawValue)
+  if (!Number.isNaN(parsed) && Number.isFinite(parsed)) {
+    display.value = String(parsed)
+    first.value = null
+    operator.value = null
+    waitingForSecond.value = false
+  }
+})
 </script>
 
 <template>

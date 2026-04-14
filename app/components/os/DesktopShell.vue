@@ -7,6 +7,13 @@ import Taskbar from '~/components/os/Taskbar.vue'
 import WindowFrame from '~/components/os/WindowFrame.vue'
 import { useOSSettings } from '~/composables/useOSSettings'
 import { useWindowManager } from '~/composables/useWindowManager'
+import type { LocationQuery } from 'vue-router'
+import type { WindowAppId } from '~/types/window'
+
+const props = defineProps<{
+  initialAppId?: WindowAppId
+  initialAppQuery?: LocationQuery
+}>()
 
 const stageRef = ref<HTMLElement | null>(null)
 const { settings } = useOSSettings()
@@ -30,7 +37,7 @@ const {
   minimizeWindow,
   maximizeWindow,
   resizeHandles
-} = useWindowManager(stageRef, settings)
+} = useWindowManager(stageRef, settings, props.initialAppId ?? null)
 
 const desktopStyle = computed(() => ({
   '--os-taskbar-size': `${settings.value.taskbarHeight}px`,
@@ -60,7 +67,10 @@ const desktopStyle = computed(() => ({
         @maximize="maximizeWindow"
         @close="closeWindow"
       >
-        <component :is="applicationsById[windowItem.id]?.component" />
+        <component
+          :is="applicationsById[windowItem.id]?.component"
+          v-bind="windowItem.id === (props.initialAppId ?? '') ? { launchQuery: props.initialAppQuery } : {}"
+        />
       </WindowFrame>
     </div>
 

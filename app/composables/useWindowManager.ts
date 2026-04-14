@@ -11,7 +11,11 @@ import type {
   WindowAppId
 } from '~/types/window'
 
-export function useWindowManager(stageRef: Ref<HTMLElement | null>, osSettings: Ref<OSSettings>) {
+export function useWindowManager(
+  stageRef: Ref<HTMLElement | null>,
+  osSettings: Ref<OSSettings>,
+  initialAppId: WindowAppId | null = null
+) {
   const windows = ref<DesktopWindow[]>(
     applicationsRegistry.map((app, index, allApps) => ({
       id: app.id,
@@ -503,6 +507,13 @@ export function useWindowManager(stageRef: Ref<HTMLElement | null>, osSettings: 
     window.addEventListener('resize', onViewportResize)
 
     onViewportResize()
+
+    if (initialAppId) {
+      const targetApp = getWindowById(initialAppId)
+      if (targetApp) {
+        openWindow(initialAppId)
+      }
+    }
   })
 
   watch(
