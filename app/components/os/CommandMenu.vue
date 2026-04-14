@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import type { DesktopShortcut, WindowAppId } from '~/types/window'
+import type { DesktopShortcutApp, WindowAppId } from '~/types/window'
 
 const props = defineProps<{
   isOpen: boolean
-  apps: DesktopShortcut[]
+  apps: DesktopShortcutApp[]
 }>()
 
 const emit = defineEmits<{

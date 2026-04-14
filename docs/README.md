@@ -11,10 +11,12 @@ If you are an AI model or a new developer, start here:
 
 - Custom window manager implemented in Vue (no UI dependency on `vue-draggable-resizable`).
 - App registry system added at `app/application/registry.ts`.
+- Desktop folders and structural layout added at `app/application/desktop-layout.ts`.
 - App modules live in `app/application/<app-id>/AppRoot.vue`.
 - Calculator app added as a registry-driven sample app.
-- Path-based deep-link example added: `/admin/calculator`.
+- path-based deep-link example added: `/admin/calculator`.
 - Query passthrough example added: `/admin/calculator?value=123`.
+- Replaced classic Start Menu with a modern, Spotlight UI pattern called `CommandMenu.vue`.
 - Configurable taskbar positions: `bottom`, `left`, `right`.
 - Maximize bounds respect OS settings (taskbar reservation + margins).
 - OS settings are persisted in `localStorage`.

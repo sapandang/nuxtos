@@ -43,11 +43,25 @@ export interface TaskbarApp {
   active: boolean
 }
 
-export interface DesktopShortcut {
+export interface DesktopShortcutApp {
+  type: 'app'
   id: WindowAppId
   title: string
   iconClass: string
 }
+
+export interface DesktopShortcutFolder {
+  type: 'folder'
+  id: string
+  title: string
+  children: DesktopShortcutApp[]
+}
+
+export type DesktopShortcut = DesktopShortcutApp | DesktopShortcutFolder
+
+export type DesktopLayoutItemConfig = 
+  | { type: 'app', id: WindowAppId }
+  | { type: 'folder', id: string, title: string, children: { type: 'app', id: WindowAppId }[] }
 
 export interface ResizeHandleDef {
   key: ResizeDir

@@ -10,6 +10,7 @@ Entry chain:
 - `app/pages/admin/calculator.vue` -> example path-based deep link into desktop shell
 - `app/components/os/DesktopShell.vue` -> orchestrates all OS UI surfaces
 - `app/application/registry.ts` -> app registration source of truth (metadata + component mapping)
+- `app/application/desktop-layout.ts` -> structural grouping and mapping of apps to the desktop surface
 - `app/composables/useWindowManager.ts` -> window logic and interactions
 - `app/composables/useOSSettings.ts` -> global configurable settings + persistence
 
@@ -25,7 +26,7 @@ Shell-level components:
 
 - `app/components/os/DesktopShortcuts.vue`
 - `app/components/os/WindowFrame.vue`
-- `app/components/os/StartMenu.vue`
+- `app/components/os/CommandMenu.vue` (Replaces StartMenu)
 - `app/components/os/Taskbar.vue`
 
 App content components:
@@ -97,7 +98,8 @@ Owns:
 ## 6) Known intentional decisions
 
 - `vue-draggable-resizable` package exists in `package.json`, but current UI does not rely on it.
-- App registration is registry-driven (`app/application/registry.ts`) so adding apps should not require shell logic edits.
+- App registration is registry-driven (`app/application/registry.ts`).
+- Desktop visibility and folders are defined exclusively in `app/application/desktop-layout.ts`.
 - Settings is implemented as a registered app module (`app/application/settings/AppRoot.vue`).
 
 ## 7) Safety rules for future edits

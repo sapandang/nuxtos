@@ -61,7 +61,6 @@ export const applicationsRegistry: RegisteredApplication[] = [
     component: CalculatorAppRoot,
     launchOnBoot: false,
     defaultPinnedToTaskbar: false,
-    defaultShowInDesktop: false,
     window: {
       x: 290,
       y: 128,

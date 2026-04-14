@@ -8,8 +8,8 @@ Use these patterns for common enhancements.
    - add `app/application/<new-app-id>/AppRoot.vue`.
 2. Register app:
    - add entry in `app/application/registry.ts` with metadata, component, and default window config.
-3. Verify shortcut/taskbar entries:
-   - they are derived from registry-initialized windows and should appear automatically.
+3. Add to Desktop (Optional):
+   - add entry in `app/application/desktop-layout.ts` (either standalone or inside a folder grouping) to make it accessible directly from the desktop surface.
 4. Optional boot launch:
    - set `launchOnBoot: true` in registry entry if needed.
 

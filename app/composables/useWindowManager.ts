@@ -1,8 +1,10 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue'
 import { applicationsRegistry } from '~/application/registry'
+import { defaultDesktopLayout } from '~/application/desktop-layout'
 import type { OSSettings } from '~/types/os-settings'
 import type {
   DesktopShortcut,
+  DesktopShortcutApp,
   DesktopWindow,
   InteractionState,
   ResizeDir,
@@ -75,26 +77,44 @@ export function useWindowManager(
       }))
   )
 
-  const allApps = computed<DesktopShortcut[]>(() =>
+  const allApps = computed<DesktopShortcutApp[]>(() =>
     windows.value.map((windowItem) => ({
+      type: 'app',
       id: windowItem.id,
       title: windowItem.title,
       iconClass: windowItem.iconClass
     }))
   )
 
-  const desktopShortcuts = computed<DesktopShortcut[]>(() =>
-    windows.value
-      .filter((windowItem) => {
-        const app = applicationsRegistry.find((a) => a.id === windowItem.id)
-        return app?.defaultShowInDesktop !== false
-      })
-      .map((windowItem) => ({
-        id: windowItem.id,
-        title: windowItem.title,
-        iconClass: windowItem.iconClass
-      }))
-  )
+  const desktopShortcuts = computed<DesktopShortcut[]>(() => {
+    return defaultDesktopLayout.map((config): DesktopShortcut => {
+      if (config.type === 'folder') {
+        const populatedChildren = config.children.map(childApp => {
+          const w = windows.value.find(win => win.id === childApp.id)
+          return {
+            type: 'app',
+            id: childApp.id,
+            title: w?.title || childApp.id,
+            iconClass: w?.iconClass || 'icon-[material-symbols--help]'
+          } as DesktopShortcutApp
+        })
+        return {
+          type: 'folder',
+          id: config.id,
+          title: config.title,
+          children: populatedChildren
+        }
+      }
+      
+      const w = windows.value.find(win => win.id === config.id)
+      return {
+        type: 'app',
+        id: config.id,
+        title: w?.title || config.id,
+        iconClass: w?.iconClass || 'icon-[material-symbols--help]'
+      }
+    })
+  })
 
   const liveWindows = computed(() => windows.value.filter((windowItem) => windowItem.isOpen && !windowItem.isMinimized))
 
