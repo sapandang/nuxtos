@@ -29,3 +29,28 @@ pnpm dev
 For an in-depth look into the architectural patterns of the OS Shell, see the local `/docs` folder:
 - **`docs/AI-HANDOFF.md`** - Core architecture map, runtime state ownership, and the guardrails of the system.
 - **`docs/FEATURE-PLAYBOOKS.md`** - Step-by-step instructions for adding apps, settings, or hooking into the maximize constraints.
+
+
+## How to use NuxtOS in your own project
+
+You can build an entirely custom product (like an SMS or HRMS) by consuming NuxtOS as a UI framework instead of cloning the repository.
+
+1. **Ensure your environment is Node 20 LTS**.
+2. **Install Tailwind and Iconify**:
+   ```bash
+   npm i -D tailwindcss @tailwindcss/vite @iconify/tailwind4 @iconify/json
+   ```
+3. **Extend the NuxtOS Layer** in your empty project's `nuxt.config.ts`:
+   ```typescript
+   export default defineNuxtConfig({
+     extends: [
+       'github:sapandang/nuxtos'
+     ]
+   })
+   ```
+4. **Copy the starter template** out of the `.playground` folder to get started quickly:
+   - Copy `.playground/app/application` -> `app/application`
+   - Copy `.playground/app/pages` -> `app/pages`
+   - Copy `.playground/app/plugins` -> `app/plugins`
+
+You can now freely edit `registry.ts` and `desktop-layout.ts` inside your own project to craft your perfect Desktop OS without ever modifying the NuxtOS core!
