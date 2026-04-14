@@ -1,4 +1,5 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue'
+import { applicationsRegistry } from '~/application/registry'
 import type { OSSettings } from '~/types/os-settings'
 import type {
   DesktopShortcut,
@@ -11,68 +12,28 @@ import type {
 } from '~/types/window'
 
 export function useWindowManager(stageRef: Ref<HTMLElement | null>, osSettings: Ref<OSSettings>) {
-  const windows = ref<DesktopWindow[]>([
-    {
-      id: 'explorer',
-      title: 'File Explorer',
-      subtitle: 'Quick access and folders',
-      iconClass: 'icon-[material-symbols--folder-rounded]',
-      x: 92,
-      y: 66,
-      w: 540,
-      h: 360,
-      minWidth: 360,
-      minHeight: 260,
-      z: 3,
-      isOpen: true,
+  const windows = ref<DesktopWindow[]>(
+    applicationsRegistry.map((app, index, allApps) => ({
+      id: app.id,
+      title: app.title,
+      subtitle: app.subtitle,
+      iconClass: app.iconClass,
+      x: app.window.x,
+      y: app.window.y,
+      w: app.window.w,
+      h: app.window.h,
+      minWidth: app.window.minWidth,
+      minHeight: app.window.minHeight,
+      z: allApps.length - index,
+      isOpen: Boolean(app.launchOnBoot),
       isMinimized: false,
       isMaximized: false,
-      restoreX: 92,
-      restoreY: 66,
-      restoreW: 540,
-      restoreH: 360
-    },
-    {
-      id: 'browser',
-      title: 'Edge Browser',
-      subtitle: 'Nuxt docs',
-      iconClass: 'icon-[mdi--microsoft-edge]',
-      x: 220,
-      y: 100,
-      w: 600,
-      h: 380,
-      minWidth: 380,
-      minHeight: 280,
-      z: 2,
-      isOpen: true,
-      isMinimized: false,
-      isMaximized: false,
-      restoreX: 220,
-      restoreY: 100,
-      restoreW: 600,
-      restoreH: 380
-    },
-    {
-      id: 'settings',
-      title: 'Settings',
-      subtitle: 'Personalization',
-      iconClass: 'icon-[material-symbols--settings-rounded]',
-      x: 158,
-      y: 144,
-      w: 500,
-      h: 340,
-      minWidth: 340,
-      minHeight: 240,
-      z: 1,
-      isOpen: true,
-      isMinimized: false,
-      isMaximized: false,
-      restoreX: 158,
-      restoreY: 144,
-      restoreW: 500,
-      restoreH: 340
-    }
-  ])
+      restoreX: app.window.x,
+      restoreY: app.window.y,
+      restoreW: app.window.w,
+      restoreH: app.window.h
+    }))
+  )
 
   const resizeHandles: ResizeHandleDef[] = [
     { key: 'n', className: 'resize-handle n' },
@@ -89,7 +50,7 @@ export function useWindowManager(stageRef: Ref<HTMLElement | null>, osSettings: 
 
   const startMenuOpen = ref(false)
   const nextZ = ref(10)
-  const activeWindowId = ref<WindowAppId | null>('explorer')
+  const activeWindowId = ref<WindowAppId | null>(applicationsRegistry.find((app) => app.launchOnBoot)?.id ?? null)
 
   const now = ref(new Date())
   let clockTimer: ReturnType<typeof setInterval> | null = null

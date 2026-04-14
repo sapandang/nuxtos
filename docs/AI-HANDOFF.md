@@ -8,6 +8,7 @@ Entry chain:
 
 - `app/pages/index.vue` -> mounts `<DesktopShell />`
 - `app/components/os/DesktopShell.vue` -> orchestrates all OS UI surfaces
+- `app/application/registry.ts` -> app registration source of truth (metadata + component mapping)
 - `app/composables/useWindowManager.ts` -> window logic and interactions
 - `app/composables/useOSSettings.ts` -> global configurable settings + persistence
 
@@ -27,9 +28,10 @@ Shell-level components:
 
 App content components:
 
-- `app/components/os/apps/ExplorerApp.vue`
-- `app/components/os/apps/BrowserApp.vue`
-- `app/components/os/apps/SettingsApp.vue`
+- `app/application/explorer/AppRoot.vue`
+- `app/application/browser/AppRoot.vue`
+- `app/application/settings/AppRoot.vue`
+- `app/application/calculator/AppRoot.vue`
 
 ## 3) Styling system
 
@@ -60,6 +62,7 @@ Notes:
 Owns:
 
 - list of windows (`windows`)
+- app-derived window initialization from `applicationsRegistry`
 - z-index and active window
 - open/minimize/maximize/close/focus actions
 - drag + resize pointer interaction state
@@ -89,8 +92,8 @@ Owns:
 ## 6) Known intentional decisions
 
 - `vue-draggable-resizable` package exists in `package.json`, but current UI does not rely on it.
-- Desktop shell currently maps app IDs with conditional rendering in `DesktopShell.vue`.
-- Settings app is the place where user-facing OS preferences are exposed.
+- App registration is registry-driven (`app/application/registry.ts`) so adding apps should not require shell logic edits.
+- Settings is implemented as a registered app module (`app/application/settings/AppRoot.vue`).
 
 ## 7) Safety rules for future edits
 

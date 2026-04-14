@@ -1,18 +1,15 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import BrowserApp from '~/components/os/apps/BrowserApp.vue'
+import { applicationsById } from '~/application/registry'
 import DesktopShortcuts from '~/components/os/DesktopShortcuts.vue'
-import ExplorerApp from '~/components/os/apps/ExplorerApp.vue'
-import SettingsApp from '~/components/os/apps/SettingsApp.vue'
 import StartMenu from '~/components/os/StartMenu.vue'
 import Taskbar from '~/components/os/Taskbar.vue'
 import WindowFrame from '~/components/os/WindowFrame.vue'
 import { useOSSettings } from '~/composables/useOSSettings'
 import { useWindowManager } from '~/composables/useWindowManager'
-import type { OSSettings } from '~/types/os-settings'
 
 const stageRef = ref<HTMLElement | null>(null)
-const { settings, updateSetting, resetSettings } = useOSSettings()
+const { settings } = useOSSettings()
 
 const {
   activeWindowId,
@@ -34,10 +31,6 @@ const {
   maximizeWindow,
   resizeHandles
 } = useWindowManager(stageRef, settings)
-
-function onUpdateSetting(key: keyof OSSettings, value: OSSettings[keyof OSSettings]) {
-  updateSetting(key, value)
-}
 
 const desktopStyle = computed(() => ({
   '--os-taskbar-size': `${settings.value.taskbarHeight}px`,
@@ -67,14 +60,7 @@ const desktopStyle = computed(() => ({
         @maximize="maximizeWindow"
         @close="closeWindow"
       >
-        <ExplorerApp v-if="windowItem.id === 'explorer'" />
-        <BrowserApp v-else-if="windowItem.id === 'browser'" />
-        <SettingsApp
-          v-else
-          :settings="settings"
-          @update-setting="onUpdateSetting"
-          @reset-settings="resetSettings"
-        />
+        <component :is="applicationsById[windowItem.id]?.component" />
       </WindowFrame>
     </div>
 

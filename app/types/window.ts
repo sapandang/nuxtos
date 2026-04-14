@@ -1,4 +1,4 @@
-export type WindowAppId = 'explorer' | 'browser' | 'settings'
+export type WindowAppId = string
 
 export type ResizeDir = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw'
 

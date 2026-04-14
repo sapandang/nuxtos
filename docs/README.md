@@ -10,6 +10,9 @@ If you are an AI model or a new developer, start here:
 ## Current status (April 2026)
 
 - Custom window manager implemented in Vue (no UI dependency on `vue-draggable-resizable`).
+- App registry system added at `app/application/registry.ts`.
+- App modules live in `app/application/<app-id>/AppRoot.vue`.
+- Calculator app added as a registry-driven sample app.
 - Configurable taskbar positions: `bottom`, `left`, `right`.
 - Maximize bounds respect OS settings (taskbar reservation + margins).
 - OS settings are persisted in `localStorage`.

@@ -4,16 +4,14 @@ Use these patterns for common enhancements.
 
 ## A) Add a new app window
 
-1. Extend app ID type:
-   - update `WindowAppId` in `app/types/window.ts`.
-2. Add window seed data:
-   - add object in `windows` array in `app/composables/useWindowManager.ts`.
-3. Create app component:
-   - add `app/components/os/apps/<NewApp>.vue`.
-4. Render in shell:
-   - update conditional render block in `app/components/os/DesktopShell.vue`.
-5. Verify shortcut/taskbar entries:
-   - they are derived from `windows`, so they appear automatically.
+1. Create app module:
+   - add `app/application/<new-app-id>/AppRoot.vue`.
+2. Register app:
+   - add entry in `app/application/registry.ts` with metadata, component, and default window config.
+3. Verify shortcut/taskbar entries:
+   - they are derived from registry-initialized windows and should appear automatically.
+4. Optional boot launch:
+   - set `launchOnBoot: true` in registry entry if needed.
 
 ## B) Add a new OS setting
 
