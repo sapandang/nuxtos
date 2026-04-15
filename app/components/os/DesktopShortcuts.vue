@@ -77,8 +77,11 @@ function handleOverlayAppClick(id: WindowAppId) {
   position: absolute;
   top: 1rem;
   left: 1rem;
+  max-height: calc(100vh - 6rem);
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
+  align-content: flex-start;
   gap: 1.5rem;
   z-index: 10;
 }
