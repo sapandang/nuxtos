@@ -93,7 +93,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="calculator-app">
+  <div class="calculator-app p-4">
     <div class="calculator-screen">{{ display }}</div>
 
     <div class="calculator-grid">

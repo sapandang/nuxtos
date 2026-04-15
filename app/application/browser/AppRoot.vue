@@ -1,5 +1,5 @@
 <template>
-  <div class="browser-shell">
+  <div class="browser-shell p-4">
     <div class="browser-bar">
       <span class="icon-[mdi--lock-outline]"></span>
       <p>https://nuxt.com/docs</p>

@@ -1,5 +1,5 @@
 <template>
-  <div class="content-card-grid">
+  <div class="content-card-grid p-4">
     <article class="content-card">
       <span class="icon-[material-symbols--description-outline-rounded]"></span>
       <div>

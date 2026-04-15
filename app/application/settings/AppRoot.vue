@@ -25,7 +25,7 @@ function onWindowMargin(value: string) {
 </script>
 
 <template>
-  <div class="settings-grid">
+  <div class="settings-grid p-4">
     <article class="settings-tile settings-panel">
       <h3>Window Behavior</h3>
       <p>Control maximize area and taskbar reservation.</p>
