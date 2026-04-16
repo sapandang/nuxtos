@@ -19,4 +19,5 @@ export interface RegisteredApplication {
   window: ApplicationWindowDefaults
   launchOnBoot?: boolean
   defaultPinnedToTaskbar?: boolean
+  allowMultiInstance?: boolean
 }

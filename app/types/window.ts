@@ -3,10 +3,12 @@ export type WindowAppId = string
 export type ResizeDir = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw'
 
 export interface DesktopWindow {
-  id: WindowAppId
+  id: string // Unique Instance ID (UUID)
+  appId: WindowAppId // Reference to Registry ID
   title: string
   subtitle: string
   iconClass: string
+  params?: Record<string, any> // Launch parameters
   x: number
   y: number
   w: number
