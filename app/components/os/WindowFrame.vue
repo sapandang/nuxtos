@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { provide } from 'vue'
 import type { DesktopWindow, ResizeDir, ResizeHandleDef } from '~/types/window'
 
-defineProps<{
+const props = defineProps<{
   windowItem: DesktopWindow
   isActive: boolean
   styleValue: Record<string, string | number>
   resizeHandles: ResizeHandleDef[]
 }>()
+
+provide('parent-window', props.windowItem)
 
 const emit = defineEmits<{
   focus: [id: DesktopWindow['id']]

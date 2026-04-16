@@ -21,6 +21,7 @@ export interface DesktopWindow {
   restoreY: number
   restoreW: number
   restoreH: number
+  showInTaskbar?: boolean
 }
 
 export interface InteractionState {
