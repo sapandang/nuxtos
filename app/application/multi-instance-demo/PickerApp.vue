@@ -4,7 +4,10 @@ import { ref, inject } from 'vue'
 const props = defineProps<{
   instanceId: string
   params?: {
+    // Standard primitive parameter passing
     initialColor?: string
+    // Complex parameter passing (Functions for continuous streams!)
+    onPreview?: (color: string) => void
   }
 }>()
 
@@ -23,8 +26,25 @@ const selected = ref(props.params?.initialColor || '')
 
 function pick(color: string) {
   selected.value = color
-  // Emit back to whoever called us!
+  
+  // ---------------------------------------------------------
+  // PATTERN 1: The "Final Promise" Resolver.
+  // This finishes the `await os.openWindow()` call in the parent
+  // and completely un-registers the callback listener.
+  // ---------------------------------------------------------
   windowManager.emitResult(props.instanceId, color)
+}
+
+function preview(color: string) {
+  // ---------------------------------------------------------
+  // PATTERN 2: The "Continuous Stream" Callback.
+  // By executing a function passed through `params`, we can
+  // send unlimited real-time events to the parent App WITHOUT
+  // resolving or destroying the final Promise!
+  // ---------------------------------------------------------
+  if (props.params?.onPreview) {
+    props.params.onPreview(color)
+  }
 }
 
 function close() {
@@ -46,6 +66,7 @@ function close() {
         class="aspect-square rounded-xl border-4 transition transform hover:scale-105 active:scale-95"
         :class="[color.class, selected === color.name ? 'border-white dark:border-slate-400 shadow-lg' : 'border-transparent']"
         :title="color.name"
+        @mouseenter="preview(color.name)"
         @click="pick(color.name)"
       />
     </div>

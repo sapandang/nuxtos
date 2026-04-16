@@ -99,6 +99,9 @@ Owns:
 - **State Preservation:** Minimizing a window **does not unmount it**. The OS Engine loops over `<WindowFrame v-show="!isMinimized">` to ensure forms and internal Vue states are never wiped when switching apps.
 - **Dynamic `<OSWindow>` Modals:** Apps can spawn native OS dialog boxes instantly using `<OSWindow>`. This component bypasses the registry and teleports a `<WindowFrame>` natively onto the OS Desktop Surface (`#os-window-stage`).
 - **Minimized Cascading:** Child `<OSWindow>` instances listen to their parent's minimized state via `inject('parent-window')`.
+- **Multi-Instance Architecture:** The Window Manager separates `appId` (Registry entry) from `id` (Instance UUID). Setting `allowMultiInstance: true` in `registry.ts` allows the OS to spawn unlimited concurrent isolated windows of the same app.
+- **Service Request API:** Calling `useWindowManager().openWindow('service-id')` returns a Promise. Child apps receive an `instanceId` prop and can use `emitResult(instanceId, data)` to resolve the promise in the parent app, essentially enabling App-to-App remote procedure calls.
+- **Continuous Streaming:** Apps can pass callback functions in the `params` payload of `openWindow` (e.g., `params: { onProgress: (val) => ... }`), which allows child apps to stream data back continuously without resolving the final Promise.
 - Taskbar position supports: `bottom | left | right`.
 - Desktop shell can accept route launch context:
   - `initialAppId` (open/focus app on boot)

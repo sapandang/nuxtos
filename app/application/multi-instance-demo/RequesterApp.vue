@@ -9,9 +9,26 @@ const windowManager = inject<any>('os-window-manager')
 async function requestColor(initial?: string) {
   addLog(`Requesting color from Service (initial: ${initial || 'none'})...`)
   
-  // Launch the picker and AWAIT the result!
+  // ---------------------------------------------------------
+  // ADVANCED API: Awaitable Windows + Streaming Callbacks!
+  // 1. Launch a unique instance of `color-service`.
+  // 2. Pass standard primitive state (`initialColor`).
+  // 3. Pass a function (`onPreview`) to act as a continuous event stream.
+  // 4. `await` the final resolution for when the user submits their choice!
+  // ---------------------------------------------------------
+  /* 
+    BASIC PROMISE EXAMPLE (If you didn't need the stream):
+    const result = await windowManager.openWindow('color-service', { 
+      params: { initialColor: initial } 
+    })
+  */
   const result = await windowManager.openWindow('color-service', { 
-    params: { initialColor: initial } 
+    params: { 
+      initialColor: initial,
+      onPreview: (color: string) => {
+        addLog(`STREAM: User currently previewing ${color}...`)
+      }
+    } 
   })
   
   if (result) {
