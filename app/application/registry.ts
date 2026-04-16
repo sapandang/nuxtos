@@ -5,6 +5,7 @@ import CalculatorAppRoot from '~/application/calculator/AppRoot.vue'
 import ExplorerAppRoot from '~/application/explorer/AppRoot.vue'
 import SettingsAppRoot from '~/application/settings/AppRoot.vue'
 import POSAppRoot from '~/application/pos/AppRoot.vue'
+import ShowcaseAppRoot from '~/application/window-showcase/AppRoot.vue'
 
 export const applicationsRegistry: RegisteredApplication[] = [
   {
@@ -86,6 +87,22 @@ export const applicationsRegistry: RegisteredApplication[] = [
       h: 600,
       minWidth: 400,
       minHeight: 400
+    }
+  },
+  {
+    id: 'showcase',
+    title: 'OS Showcase',
+    subtitle: 'Capabilities Demo',
+    iconClass: 'icon-[mdi--window-restore]',
+    component: markRaw(ShowcaseAppRoot),
+    launchOnBoot: false,
+    window: {
+      x: 120,
+      y: 100,
+      w: 950,
+      h: 650,
+      minWidth: 800,
+      minHeight: 500
     }
   }
 ]
