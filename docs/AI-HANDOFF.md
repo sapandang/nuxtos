@@ -77,13 +77,14 @@ Owns:
 
 Owns:
 
-- list of windows (`windows`)
-- app-derived window initialization from `useNuxtOS().registry`
-- z-index and active window
-- open/minimize/maximize/close/focus actions
-- drag + resize pointer interaction state
-- computed taskbar apps + desktop shortcuts
-- clock/date display state
+- list of windows (`windows`) tracking both statically registered apps and dynamic `<OSWindow>` instances.
+- `openWindows` (filters `isOpen` to keep DOM mounted via `v-show`) vs `liveWindows` (active onscreen).
+- z-index and active window tracker.
+- `spawnDynamicWindow` / `destroyDynamicWindow` for dynamically tracking un-registered popups.
+- open/minimize/maximize/close/focus actions.
+- drag + resize pointer interaction state.
+
+*Important: The entire `useWindowManager` return object is cascaded globally into all Apps via `provide('os-window-manager')`.*
 
 ### OS settings (`useOSSettings`)
 
@@ -95,6 +96,9 @@ Owns:
 
 ## 5) Important behavior contracts
 
+- **State Preservation:** Minimizing a window **does not unmount it**. The OS Engine loops over `<WindowFrame v-show="!isMinimized">` to ensure forms and internal Vue states are never wiped when switching apps.
+- **Dynamic `<OSWindow>` Modals:** Apps can spawn native OS dialog boxes instantly using `<OSWindow>`. This component bypasses the registry and teleports a `<WindowFrame>` natively onto the OS Desktop Surface (`#os-window-stage`).
+- **Minimized Cascading:** Child `<OSWindow>` instances listen to their parent's minimized state via `inject('parent-window')`.
 - Taskbar position supports: `bottom | left | right`.
 - Desktop shell can accept route launch context:
   - `initialAppId` (open/focus app on boot)

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, provide } from 'vue'
 import { useNuxtOS } from '~/composables/useNuxtOS'
 import DesktopShortcuts from '~/components/os/DesktopShortcuts.vue'
 import CommandMenu from '~/components/os/CommandMenu.vue'
@@ -21,6 +21,9 @@ const { settings } = useOSSettings()
 const os = useNuxtOS()
 const applicationsById = os.applicationsById
 
+const windowManager = useWindowManager(stageRef, settings, props.initialAppId ?? null)
+provide('os-window-manager', windowManager)
+
 const {
   activeWindowId,
   allApps,
@@ -28,6 +31,7 @@ const {
   currentTime,
   desktopShortcuts,
   liveWindows,
+  openWindows,
   onDesktopPointerDown,
   onTaskbarAppClick,
   openWindow,
@@ -41,7 +45,7 @@ const {
   minimizeWindow,
   maximizeWindow,
   resizeHandles
-} = useWindowManager(stageRef, settings, props.initialAppId ?? null)
+} = windowManager
 
 const desktopStyle = computed(() => ({
   '--os-taskbar-size': `${settings.value.taskbarHeight}px`,
@@ -56,9 +60,10 @@ const desktopStyle = computed(() => ({
 
     <DesktopShortcuts :shortcuts="desktopShortcuts" @open="openWindow" />
 
-    <div ref="stageRef" class="window-stage">
+    <div ref="stageRef" id="os-window-stage" class="window-stage">
       <WindowFrame
-        v-for="windowItem in liveWindows"
+        v-for="windowItem in openWindows"
+        v-show="!windowItem.isMinimized"
         :key="windowItem.id"
         :window-item="windowItem"
         :is-active="windowItem.id === activeWindowId"

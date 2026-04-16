@@ -25,17 +25,19 @@ const taskbarClass = computed(() => `pos-${props.position}`)
         <span class="icon-[mdi--microsoft-windows]"></span>
       </button>
 
-      <button
-        v-for="app in apps"
-        :key="app.id"
-        class="taskbar-btn app-btn"
-        :class="{ active: app.active }"
-        :title="app.title"
-        @click="emit('appClick', app.id)"
-      >
-        <span :class="['taskbar-icon', app.iconClass]"></span>
-        <span v-if="app.running" class="running-dot"></span>
-      </button>
+      <div class="taskbar-apps-scroll">
+        <button
+          v-for="app in apps"
+          :key="app.id"
+          class="taskbar-btn app-btn"
+          :class="{ active: app.active }"
+          :title="app.title"
+          @click="emit('appClick', app.id)"
+        >
+          <span :class="['taskbar-icon', app.iconClass]"></span>
+          <span v-if="app.running" class="running-dot"></span>
+        </button>
+      </div>
     </div>
 
     <div class="taskbar-right">

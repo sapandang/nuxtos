@@ -70,6 +70,10 @@ export function useWindowManager(
     windows.value
       .filter((windowItem) => {
         const app = os.applicationsById.value[windowItem.id]
+        
+        // If explicitly set to false on a dynamic window, hide it completely.
+        if (windowItem.showInTaskbar === false) return false
+
         const isPinned = app?.defaultPinnedToTaskbar !== false
         return isPinned || windowItem.isOpen
       })
@@ -121,6 +125,9 @@ export function useWindowManager(
     })
   })
 
+  // Open windows bypasses the minimized check so we don't destroy actual DOM nodes
+  const openWindows = computed(() => windows.value.filter((windowItem) => windowItem.isOpen))
+  
   const liveWindows = computed(() => windows.value.filter((windowItem) => windowItem.isOpen && !windowItem.isMinimized))
 
   const currentTime = computed(() =>
@@ -235,6 +242,42 @@ export function useWindowManager(
     if (activeWindowId.value === id) {
       setFallbackActive(id)
     }
+  }
+
+  function spawnDynamicWindow(config: { id: string, title?: string, subtitle?: string, w?: number, h?: number, minWidth?: number, minHeight?: number, iconClass?: string, showInTaskbar?: boolean }) {
+    if (getWindowById(config.id)) return // Already exists
+    
+    windows.value.push({
+      id: config.id,
+      title: config.title || 'Window',
+      subtitle: config.subtitle || '',
+      iconClass: config.iconClass || '',
+      x: 100 + (Math.random() * 50),
+      y: 100 + (Math.random() * 50),
+      w: config.w || 500,
+      h: config.h || 400,
+      minWidth: config.minWidth || 300,
+      minHeight: config.minHeight || 200,
+      z: nextZ.value++,
+      isOpen: true,
+      isMinimized: false,
+      isMaximized: false,
+      restoreX: 100,
+      restoreY: 100,
+      restoreW: config.w || 500,
+      restoreH: config.h || 400,
+      showInTaskbar: config.showInTaskbar ?? true
+    })
+    
+    // Automatically focus
+    activeWindowId.value = config.id
+  }
+
+  function destroyDynamicWindow(id: string) {
+    if (activeWindowId.value === id) {
+      setFallbackActive(id)
+    }
+    windows.value = windows.value.filter(w => w.id !== id)
   }
 
   function applyMaximizedBounds(windowItem: DesktopWindow) {
@@ -585,12 +628,14 @@ export function useWindowManager(
   })
 
   return {
+    windows,
     activeWindowId,
     allApps,
     currentDate,
     currentTime,
     desktopShortcuts,
     liveWindows,
+    openWindows,
     onDesktopPointerDown,
     onTaskbarAppClick,
     openWindow,
@@ -603,6 +648,8 @@ export function useWindowManager(
     closeWindow,
     minimizeWindow,
     maximizeWindow,
-    resizeHandles
+    resizeHandles,
+    spawnDynamicWindow,
+    destroyDynamicWindow
   }
 }
