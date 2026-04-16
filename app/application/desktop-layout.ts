@@ -1,6 +1,7 @@
 import type { DesktopLayoutItemConfig } from '~/types/window'
 
 export const defaultDesktopLayout: DesktopLayoutItemConfig[] = [
+  { type: 'app', id: 'instance-tester' },
   { type: 'app', id: 'showcase' },
   { type: 'app', id: 'pos' },
   { type: 'app', id: 'explorer' },

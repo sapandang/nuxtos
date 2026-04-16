@@ -13,6 +13,7 @@ const props = withDefaults(defineProps<{
   showInTaskbar?: boolean
   minimized?: boolean
   minimizeWithParent?: boolean
+  params?: any
 }>(), {
   title: 'Window',
   subtitle: '',
@@ -50,7 +51,8 @@ function injectWindow() {
     h: props.height,
     minWidth: props.minWidth,
     minHeight: props.minHeight,
-    showInTaskbar: props.showInTaskbar
+    showInTaskbar: props.showInTaskbar,
+    params: props.params
   })
 }
 

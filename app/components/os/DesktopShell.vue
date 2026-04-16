@@ -77,8 +77,12 @@ const desktopStyle = computed(() => ({
         @close="closeWindow"
       >
         <component
-          :is="applicationsById[windowItem.id]?.component"
-          v-bind="windowItem.id === (props.initialAppId ?? '') ? { launchQuery: props.initialAppQuery } : {}"
+          :is="applicationsById[windowItem.appId]?.component"
+          v-bind="{
+            instanceId: windowItem.id,
+            params: windowItem.params,
+            ...(windowItem.appId === props.initialAppId ? { launchQuery: props.initialAppQuery } : {})
+          }"
         />
       </WindowFrame>
     </div>

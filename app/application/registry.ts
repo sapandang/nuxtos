@@ -6,6 +6,8 @@ import ExplorerAppRoot from '~/application/explorer/AppRoot.vue'
 import SettingsAppRoot from '~/application/settings/AppRoot.vue'
 import POSAppRoot from '~/application/pos/AppRoot.vue'
 import ShowcaseAppRoot from '~/application/window-showcase/AppRoot.vue'
+import PickerAppRoot from '~/application/multi-instance-demo/PickerApp.vue'
+import RequesterAppRoot from '~/application/multi-instance-demo/RequesterApp.vue'
 
 export const applicationsRegistry: RegisteredApplication[] = [
   {
@@ -103,6 +105,32 @@ export const applicationsRegistry: RegisteredApplication[] = [
       h: 650,
       minWidth: 800,
       minHeight: 500
+    }
+  },
+  {
+    id: 'color-service',
+    title: 'Color Service',
+    subtitle: 'App Callback Provider',
+    iconClass: 'icon-[mdi--palette]',
+    component: markRaw(PickerAppRoot),
+    allowMultiInstance: true, // IMPORTANT
+    window: {
+      x: 300, y: 150,
+      w: 400, h: 450,
+      minWidth: 300, minHeight: 300
+    }
+  },
+  {
+    id: 'instance-tester',
+    title: 'Service Tester',
+    subtitle: 'Multi-Instance Demo',
+    iconClass: 'icon-[mdi--test-tube]',
+    component: markRaw(RequesterAppRoot),
+    allowMultiInstance: false,
+    window: {
+      x: 200, y: 120,
+      w: 600, h: 500,
+      minWidth: 400, minHeight: 400
     }
   }
 ]

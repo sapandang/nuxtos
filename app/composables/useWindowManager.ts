@@ -18,12 +18,14 @@ export function useWindowManager(
   initialAppId: WindowAppId | null = null
 ) {
   const os = useNuxtOS()
+  const callbacks = new Map<string, (result: any) => void>()
 
-  const activeWindowId = ref<WindowAppId | null>(null) // We will initialize this correctly in mounted or watch
+  const activeWindowId = ref<string | null>(null)
 
   const windows = ref<DesktopWindow[]>(
     os.registry.value.map((app, index, allApps) => ({
-      id: app.id,
+      id: app.id, // Primary instance ID matches appId for boot apps
+      appId: app.id,
       title: app.title,
       subtitle: app.subtitle,
       iconClass: app.iconClass,
@@ -69,29 +71,31 @@ export function useWindowManager(
   const taskbarApps = computed<TaskbarApp[]>(() =>
     windows.value
       .filter((windowItem) => {
-        const app = os.applicationsById.value[windowItem.id]
+        const app = os.applicationsById.value[windowItem.appId]
         
         // If explicitly set to false on a dynamic window, hide it completely.
         if (windowItem.showInTaskbar === false) return false
 
         const isPinned = app?.defaultPinnedToTaskbar !== false
+        // For multi-instance, only open windows show in taskbar if they aren't pinned
         return isPinned || windowItem.isOpen
       })
       .map((windowItem) => ({
         id: windowItem.id,
+        appId: windowItem.appId,
         title: windowItem.title,
         iconClass: windowItem.iconClass,
         running: windowItem.isOpen,
         active: windowItem.id === activeWindowId.value && windowItem.isOpen && !windowItem.isMinimized
-      }))
+      })) as (TaskbarApp & { appId: string })[]
   )
 
   const allApps = computed<DesktopShortcutApp[]>(() =>
-    windows.value.map((windowItem) => ({
+    os.registry.value.map((app) => ({
       type: 'app',
-      id: windowItem.id,
-      title: windowItem.title,
-      iconClass: windowItem.iconClass
+      id: app.id,
+      title: app.title,
+      iconClass: app.iconClass
     }))
   )
 
@@ -144,7 +148,7 @@ export function useWindowManager(
     })
   )
 
-  function getWindowById(id: WindowAppId) {
+  function getWindowById(id: string) {
     return windows.value.find((entry) => entry.id === id)
   }
 
@@ -161,7 +165,7 @@ export function useWindowManager(
     }
   }
 
-  function bringToFront(id: WindowAppId) {
+  function bringToFront(id: string) {
     const windowItem = getWindowById(id)
     if (!windowItem || !windowItem.isOpen) {
       return
@@ -172,7 +176,7 @@ export function useWindowManager(
     activeWindowId.value = id
   }
 
-  function setFallbackActive(excludedId: WindowAppId) {
+  function setFallbackActive(excludedId: string) {
     const fallback = windows.value
       .filter((entry) => entry.isOpen && !entry.isMinimized && entry.id !== excludedId)
       .sort((a, b) => b.z - a.z)[0]
@@ -198,11 +202,42 @@ export function useWindowManager(
     windowItem.y = Math.min(Math.max(0, windowItem.y), Math.max(0, height - windowItem.h))
   }
 
-  function openWindow(id: WindowAppId) {
-    const windowItem = getWindowById(id)
+  function openWindow(appId: WindowAppId, options?: { params?: Record<string, any> }) {
+    const app = os.applicationsById.value[appId]
+    if (!app) return Promise.resolve(null)
+
+    // Find existing window if multi-instance is not allowed
+    let windowItem = windows.value.find(w => w.appId === appId && !app.allowMultiInstance)
+    
     if (!windowItem) {
-      return
+      // Create new instance
+      const id = `${appId}-${Math.random().toString(36).substring(2, 9)}`
+      windowItem = {
+        id,
+        appId: app.id,
+        title: app.title,
+        subtitle: app.subtitle,
+        iconClass: app.iconClass,
+        params: options?.params,
+        x: app.window.x + (Math.random() * 40 - 20), // Offset slightly
+        y: app.window.y + (Math.random() * 40 - 20),
+        w: app.window.w,
+        h: app.window.h,
+        minWidth: app.window.minWidth,
+        minHeight: app.window.minHeight,
+        z: nextZ.value++,
+        isOpen: true,
+        isMinimized: false,
+        isMaximized: false,
+        restoreX: app.window.x,
+        restoreY: app.window.y,
+        restoreW: app.window.w,
+        restoreH: app.window.h
+      }
+      windows.value.push(windowItem)
     }
+
+    const targetId = windowItem.id
 
     windowItem.isOpen = true
     windowItem.isMinimized = false
@@ -213,11 +248,15 @@ export function useWindowManager(
       clampWindowInStage(windowItem)
     }
 
-    bringToFront(id)
+    bringToFront(targetId)
     startMenuOpen.value = false
+
+    return new Promise((resolve) => {
+      callbacks.set(targetId, resolve)
+    })
   }
 
-  function closeWindow(id: WindowAppId) {
+  function closeWindow(id: string) {
     const windowItem = getWindowById(id)
     if (!windowItem) {
       return
@@ -226,12 +265,25 @@ export function useWindowManager(
     windowItem.isOpen = false
     windowItem.isMinimized = false
 
+    // Clean up callback if it was never resolved
+    if (callbacks.has(id)) {
+      const resolve = callbacks.get(id)
+      resolve?.(null)
+      callbacks.delete(id)
+    }
+
     if (activeWindowId.value === id) {
       setFallbackActive(id)
     }
+    
+    // If it's a dynamic instance (not a boot app), remove it completely
+    const app = os.applicationsById.value[windowItem.appId]
+    if (app && app.allowMultiInstance) {
+       destroyDynamicWindow(id)
+    }
   }
 
-  function minimizeWindow(id: WindowAppId) {
+  function minimizeWindow(id: string) {
     const windowItem = getWindowById(id)
     if (!windowItem || !windowItem.isOpen) {
       return
@@ -244,14 +296,16 @@ export function useWindowManager(
     }
   }
 
-  function spawnDynamicWindow(config: { id: string, title?: string, subtitle?: string, w?: number, h?: number, minWidth?: number, minHeight?: number, iconClass?: string, showInTaskbar?: boolean }) {
+  function spawnDynamicWindow(config: { id: string, appId?: string, title?: string, subtitle?: string, w?: number, h?: number, minWidth?: number, minHeight?: number, iconClass?: string, showInTaskbar?: boolean, params?: any }) {
     if (getWindowById(config.id)) return // Already exists
     
     windows.value.push({
       id: config.id,
+      appId: config.appId || 'dynamic',
       title: config.title || 'Window',
       subtitle: config.subtitle || '',
       iconClass: config.iconClass || '',
+      params: config.params,
       x: 100 + (Math.random() * 50),
       y: 100 + (Math.random() * 50),
       w: config.w || 500,
@@ -314,7 +368,7 @@ export function useWindowManager(
     windowItem.h = Math.max(windowItem.minHeight, availableHeight)
   }
 
-  function maximizeWindow(id: WindowAppId) {
+  function maximizeWindow(id: string) {
     const windowItem = getWindowById(id)
     if (!windowItem || !windowItem.isOpen) {
       return
@@ -341,7 +395,7 @@ export function useWindowManager(
     bringToFront(id)
   }
 
-  function onTaskbarAppClick(id: WindowAppId) {
+  function onTaskbarAppClick(id: string) {
     const windowItem = getWindowById(id)
     if (!windowItem) {
       return
@@ -507,7 +561,7 @@ export function useWindowManager(
     interaction.value = null
   }
 
-  function startDrag(event: PointerEvent, id: WindowAppId) {
+  function startDrag(event: PointerEvent, id: string) {
     if (event.button !== 0) {
       return
     }
@@ -531,7 +585,7 @@ export function useWindowManager(
     }
   }
 
-  function startResize(event: PointerEvent, id: WindowAppId, dir: ResizeDir) {
+  function startResize(event: PointerEvent, id: string, dir: ResizeDir) {
     if (event.button !== 0) {
       return
     }
@@ -555,6 +609,14 @@ export function useWindowManager(
       startY: windowItem.y,
       startW: windowItem.w,
       startH: windowItem.h
+    }
+  }
+
+  function emitResult(id: string, data: any) {
+    const resolve = callbacks.get(id)
+    if (resolve) {
+      resolve(data)
+      callbacks.delete(id)
     }
   }
 
@@ -650,6 +712,7 @@ export function useWindowManager(
     maximizeWindow,
     resizeHandles,
     spawnDynamicWindow,
-    destroyDynamicWindow
+    destroyDynamicWindow,
+    emitResult
   }
 }
