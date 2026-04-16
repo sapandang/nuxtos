@@ -13,6 +13,35 @@
   border: 1px solid rgba(185, 211, 250, 0.72);
   box-shadow: 0 10px 20px rgba(8, 20, 52, 0.26);
   backdrop-filter: blur(12px);
+  max-width: calc(100vw - 300px);
+  overflow: hidden;
+}
+
+.taskbar-apps-scroll {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.taskbar-apps-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.taskbar.pos-left .taskbar-center,
+.taskbar.pos-right .taskbar-center {
+  max-width: none;
+  max-height: calc(100vh - 200px);
+}
+
+.taskbar.pos-left .taskbar-apps-scroll,
+.taskbar.pos-right .taskbar-apps-scroll {
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .taskbar-btn {
