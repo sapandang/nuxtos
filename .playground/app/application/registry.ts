@@ -1,9 +1,13 @@
 import { markRaw } from 'vue'
-import type { RegisteredApplication } from '../../../app/types/application'
+import type { RegisteredApplication } from '~/types/application'
 import BrowserAppRoot from '~/application/browser/AppRoot.vue'
 import CalculatorAppRoot from '~/application/calculator/AppRoot.vue'
 import ExplorerAppRoot from '~/application/explorer/AppRoot.vue'
 import SettingsAppRoot from '~/application/settings/AppRoot.vue'
+import POSAppRoot from '~/application/pos/AppRoot.vue'
+import ShowcaseAppRoot from '~/application/window-showcase/AppRoot.vue'
+import PickerAppRoot from '~/application/multi-instance-demo/PickerApp.vue'
+import RequesterAppRoot from '~/application/multi-instance-demo/RequesterApp.vue'
 
 export const applicationsRegistry: RegisteredApplication[] = [
   {
@@ -69,6 +73,64 @@ export const applicationsRegistry: RegisteredApplication[] = [
       h: 420,
       minWidth: 300,
       minHeight: 380
+    }
+  },
+  {
+    id: 'pos',
+    title: 'Point of Sale',
+    subtitle: 'Order management',
+    iconClass: 'icon-[carbon--shopping-cart]',
+    component: markRaw(POSAppRoot),
+    launchOnBoot: false,
+    window: {
+      x: 100,
+      y: 100,
+      w: 800,
+      h: 600,
+      minWidth: 400,
+      minHeight: 400
+    }
+  },
+  {
+    id: 'showcase',
+    title: 'OS Showcase',
+    subtitle: 'Capabilities Demo',
+    iconClass: 'icon-[mdi--window-restore]',
+    component: markRaw(ShowcaseAppRoot),
+    launchOnBoot: false,
+    window: {
+      x: 120,
+      y: 100,
+      w: 950,
+      h: 650,
+      minWidth: 800,
+      minHeight: 500
+    }
+  },
+  {
+    id: 'color-service',
+    title: 'Color Service',
+    subtitle: 'App Callback Provider',
+    iconClass: 'icon-[mdi--palette]',
+    component: markRaw(PickerAppRoot),
+    allowMultiInstance: true, // IMPORTANT
+    window: {
+      x: 300, y: 150,
+      w: 400, h: 450,
+      minWidth: 300, minHeight: 300
+    }
+  },
+  {
+    id: 'instance-tester',
+    title: 'Service Tester',
+    subtitle: 'Multi-Instance Demo',
+    iconClass: 'icon-[mdi--test-tube]',
+    component: markRaw(RequesterAppRoot),
+    allowMultiInstance: false,
+    window: {
+      x: 200, y: 120,
+      w: 600, h: 500,
+      minWidth: 400, minHeight: 400
     }
   }
 ]
