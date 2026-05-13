@@ -16,7 +16,7 @@ export default defineNuxtConfig({
     }
   },
   components: [
-    { path: fileURLToPath(new URL('./app/components/os', import.meta.url)), pathPrefix: false }
+    { path: fileURLToPath(new URL('./app/components/os', import.meta.url)), pathPrefix: false, global: true }
   ],
   css: [fileURLToPath(new URL('./app/assets/css/main.css', import.meta.url))],
   vite: {
